@@ -1,0 +1,44 @@
+  .list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .listItem {
+    margin: 0 0 1.25rem;
+    display: flex;
+    gap: 10px;
+    justify-content: space-around;
+    width: 100%;
+  }
+
+  .listItem > *  {
+    min-width: 190px;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .listItem :nth-child(2)  {
+    border: 1px solid black;
+    border-radius: 5px;
+  }
+
+  .listItem :nth-child(3) div  {
+    color: red !important;
+    cursor: pointer;
+    padding: 0px 5px;
+  }
+
+  .lightText {
+    color: #666;
+  }
+
+  .snackBar {
+    background-color: red;
+    color: white;
+    width: 100%;
+    text-align: center;
+    padding: 10px;
+  }

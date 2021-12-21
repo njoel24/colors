@@ -1,0 +1,11 @@
+html,
+input {
+  width: 100%;
+  margin: 10px auto;
+  padding: 5px;
+}
+
+button {
+  width: 100%;
+  margin: 10px auto;
+}
