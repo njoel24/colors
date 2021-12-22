@@ -38,8 +38,8 @@ export default function Home({ colors }) {
 
   const addColor = async () => {
     try {
-      await axios.post(`${apiEndpoint}create`, {name: colorValue, value:colorValue})
-      setUpdatedColorsList((state) => [...state, {hex_value: colorValue}]);
+      const {data} = await axios.post(`${apiEndpoint}create`, {name: colorValue, value:colorValue})
+      setUpdatedColorsList((state) => [...state, {hex_value: data }]);
     } catch (e) {
       setErrorMessage(`${JSON.stringify(e.message)}`);
     }
