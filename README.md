@@ -1,2 +1,1 @@
-- Colors UI
-- chrome.exe --user-data-dir="C:/Chrome dev session" --disable-web-security
+Example of using NextJS and DynamoDB for CRUD operations.
