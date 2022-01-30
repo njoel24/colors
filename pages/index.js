@@ -1,18 +1,18 @@
 import Layout from '../components/layout'
 import styles from './index.module.css'
-import { useState } from 'react'
-import axios from 'axios'
+import { useEffect, useState } from 'react'
+import AWS from 'aws-sdk'
 
-const apiEndpoint = 'http://localhost/colors-api/index.php/color/';
-
-export async function getStaticProps() {
-  const results = await axios.get(`${apiEndpoint}list`);
-  return {
-    props: {
-      colors: results.data
-    }
-  }
-}
+const tableName = 'Colors';
+const params = {
+  TableName: tableName
+};
+AWS.config.update({
+  accessKeyId: '',
+  secretAccessKey: '',
+  region: 'us-east-1',
+});
+const client = new AWS.DynamoDB.DocumentClient();
 
 function isColorTooLight(color) {
   const hex = color.replace('#', '');
@@ -26,7 +26,7 @@ function isColorTooLight(color) {
 export default function Home({ colors }) {
   const [colorValue, setColorValue] = useState('');
   const [error, setError] = useState('');
-  const [updatedColorsList, setUpdatedColorsList] = useState(colors);
+  const [updatedColorsList, setUpdatedColorsList] = useState([]);
   const { snackBar, headingMd, headingLg, list, padding1px, listItem} = styles;
 
   const setErrorMessage  = (message) => {
@@ -36,10 +36,33 @@ export default function Home({ colors }) {
     }, 3000)
   }
 
+  useEffect(() => {
+    client.scan(params, (err, data) => {
+      const items = data.Items.map((item) => ({name: item['Name'], hex_value: item['Value']}));
+      setUpdatedColorsList(items);
+    }) 
+  }, []) 
+
   const addColor = async () => {
     try {
-      const {data} = await axios.post(`${apiEndpoint}create`, {name: colorValue, value:colorValue})
-      setUpdatedColorsList((state) => [...state, {hex_value: data }]);
+      const params = {
+        TableName: tableName,
+        Item: {
+            // name property passed from body
+            "color_": colorValue,
+            "Name": colorValue,
+            "Value": colorValue
+        }
+      };
+      client.put(params, (err, data) => {
+        if (err) {
+            console.error("Unable to add item.");
+            console.error("Error JSON:", JSON.stringify(err, null, 2));
+        } else {
+            console.log("Added item:", JSON.stringify(data, null, 2));
+            setUpdatedColorsList((state) => [...state, {hex_value: colorValue }]);
+        }
+      });
     } catch (e) {
       setErrorMessage(`${JSON.stringify(e.message)}`);
     }
@@ -47,8 +70,22 @@ export default function Home({ colors }) {
 
   const deleteColor = async (value) => {
     try {
-      await axios.delete(`${apiEndpoint}delete`, {data: {value}})
-      setUpdatedColorsList((state) => state.filter(({hex_value}) => hex_value !== value ));
+      const params = {
+        TableName: tableName,
+        Key: {
+          // name property passed from body
+          "color_": value
+      }
+      };
+      client.delete(params, (err, data) => {
+        if (err) {
+            console.error("Unable to delete item.");
+            console.error("Error JSON:", JSON.stringify(err, null, 2));
+        } else {
+            console.log("Delete item:", JSON.stringify(data, null, 2));
+            setUpdatedColorsList((state) => state.filter(({hex_value}) => hex_value !== value ));
+        }
+      });
     } catch (e) {
       setErrorMessage(`${JSON.stringify(e.message)}`);
     }

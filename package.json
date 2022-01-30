@@ -7,6 +7,7 @@
     "test": "jest"
   },
   "dependencies": {
+    "aws-sdk": "^2.1057.0",
     "axios": "^0.24.0",
     "next": "latest",
     "react": "17.0.2",
@@ -17,5 +18,6 @@
     "@testing-library/react": "^12.1.2",
     "jest": "^27.4.5",
     "react-test-renderer": "^17.0.2"
-  }
+  },
+  "name": "colors-ui"
 }
